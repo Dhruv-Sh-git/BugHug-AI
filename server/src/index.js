@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.routes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
-app.use("/api", require("./routes/chatRoutes"));
+app.use("/api", chatRoutes);
 app.use("/api/auth", authRoutes);
 
 mongoose.connect(process.env.MONGO_URI)

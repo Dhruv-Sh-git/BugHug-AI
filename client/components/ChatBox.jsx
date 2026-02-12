@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { sendMessage } from "@/lib/api";
 
-export default function ChatBox({ token }) {
+export default function ChatBox() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,16 +15,23 @@ export default function ChatBox({ token }) {
     setInput("");
     setLoading(true);
 
-    const res = await sendMessage(token, {
-      message: input,
-      sessionId
-    });
+    try {
+      const res = await sendMessage({
+        message: input,
+        sessionId
+      });
 
-    setSessionId(res.sessionId);
-    setMessages(prev => [
-      ...prev,
-      { role: "assistant", content: res.reply }
-    ]);
+      setSessionId(res.sessionId);
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", content: res.reply }
+      ]);
+    } catch (err) {
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", content: "Sorry, I'm having trouble connecting right now. Please try again." }
+      ]);
+    }
 
     setLoading(false);
   };

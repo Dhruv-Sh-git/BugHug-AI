@@ -1,4 +1,4 @@
-module.exports = `
+export default `
 You are an AI therapist for software developers.
 
 Rules:

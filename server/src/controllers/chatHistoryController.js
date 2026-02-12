@@ -1,6 +1,6 @@
-const ChatSession = require("../models/ChatSession");
+import ChatSession from "../models/ChatSession.js";
 
-exports.getRecentChats = async (req, res) => {
+export const getRecentChats = async (req, res) => {
   const chats = await ChatSession.find({ userId: req.user.id })
     .sort({ createdAt: -1 })
     .limit(5)

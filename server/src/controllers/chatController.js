@@ -1,8 +1,8 @@
-const ChatSession = require("../models/ChatSession");
-const openai = require("../config/openai");
-const therapistPrompt = require("../prompts/therapistPrompt");
+import ChatSession from "../models/ChatSession.js";
+import openai from "../config/groqai.js";
+import therapistPrompt from "../prompts/therapistPrompt.js";
 
-exports.sendMessage = async (req, res) => {
+export const sendMessage = async (req, res) => {
   try {
     const { message, sessionId } = req.body;
     const userId = req.user.id;
