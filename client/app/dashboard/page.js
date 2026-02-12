@@ -16,6 +16,16 @@ export default function Dashboard() {
       .catch(() => router.push("/login"));
   }, [router]);
 
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+      router.push("/login");
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-8 text-white">
@@ -26,13 +36,22 @@ export default function Dashboard() {
 
   return (
     <div className="p-8 text-white">
-      <h1 className="text-2xl font-semibold">
-        Welcome to your mental debugger 🧠
-      </h1>
-
-      <p className="text-slate-400 mt-2 mb-6">
-        Your AI therapist is one click away.
-      </p>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold">
+            Welcome to your mental debugger 🧠
+          </h1>
+          <p className="text-slate-400 mt-2">
+            Your AI therapist is one click away.
+          </p>
+        </div>
+        <button 
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* Chat Component */}
       <ChatBox />

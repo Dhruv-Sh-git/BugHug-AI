@@ -36,6 +36,13 @@ export default function ChatBox() {
     setLoading(false);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <div className="bg-neutral-900 p-4 rounded-xl h-[500px] flex flex-col">
       <div className="flex-1 overflow-y-auto space-y-3">
@@ -63,6 +70,7 @@ export default function ChatBox() {
           className="flex-1 p-2 rounded bg-neutral-800 outline-none"
           value={input}
           onChange={e => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="I hate my code…"
         />
         <button

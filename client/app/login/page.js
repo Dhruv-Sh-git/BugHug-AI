@@ -18,13 +18,19 @@ export default function Login() {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      submit();
+    }
+  };
+
   return (
     <div className="h-screen flex items-center justify-center">
       <div className="bg-slate-800 p-6 rounded w-80">
         <h2 className="text-xl mb-4">Login</h2>
         {error && <div className="bg-red-500/20 text-red-400 p-2 rounded mb-3 text-sm">{error}</div>}
-        <input placeholder="Email" className="input" onChange={e => setForm({ ...form, email: e.target.value })} />
-        <input type="password" placeholder="Password" className="input mt-2" onChange={e => setForm({ ...form, password: e.target.value })} />
+        <input placeholder="Email" className="input" onChange={e => setForm({ ...form, email: e.target.value })} onKeyPress={handleKeyPress} />
+        <input type="password" placeholder="Password" className="input mt-2" onChange={e => setForm({ ...form, password: e.target.value })} onKeyPress={handleKeyPress} />
         <button onClick={submit} className="mt-4 w-full bg-green-600 py-2 rounded">Login</button>
         <p className="text-center text-sm text-slate-400 mt-4">
           Don't have an account?{" "}

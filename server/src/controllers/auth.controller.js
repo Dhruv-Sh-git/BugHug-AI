@@ -56,3 +56,12 @@ export const me = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch user" });
   }
 };
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.json({ message: "Logged out successfully" });
+  } catch {
+    res.status(500).json({ message: "Logout failed" });
+  }
+};
