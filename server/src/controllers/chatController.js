@@ -1,5 +1,5 @@
 import ChatSession from "../models/ChatSession.js";
-import openai from "../config/groqai.js";
+import groq from "../config/groqai.js";
 import therapistPrompt from "../prompts/therapistPrompt.js";
 
 export const sendMessage = async (req, res) => {
@@ -25,8 +25,8 @@ export const sendMessage = async (req, res) => {
       content: message
     });
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       messages: [
         { role: "system", content: therapistPrompt },
         ...session.messages.map(m => ({
