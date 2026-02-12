@@ -27,6 +27,10 @@ export default function Signup() {
         <input placeholder="Email" className="input mt-2" onChange={e => setForm({ ...form, email: e.target.value })} />
         <input type="password" placeholder="Password" className="input mt-2" onChange={e => setForm({ ...form, password: e.target.value })} />
         <button onClick={submit} className="mt-4 w-full bg-blue-600 py-2 rounded">Create account</button>
+        <p className="text-center text-sm text-slate-400 mt-4">
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-500 hover:underline">Login</a>
+        </p>
       </div>
     </div>
   );
