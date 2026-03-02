@@ -1,99 +1,195 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const router = useRouter();
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("bughug-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const nextTheme = stored || (prefersDark ? "dark" : "light");
+    setTheme(nextTheme);
+    document.documentElement.setAttribute("data-theme", nextTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    document.documentElement.setAttribute("data-theme", nextTheme);
+    window.localStorage.setItem("bughug-theme", nextTheme);
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
-      <div className="text-center px-6 max-w-4xl mx-auto">
-        {/* Logo */}
-        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
-          <svg
-            className="w-12 h-12 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </div>
-
-        {/* Hero Text */}
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-          BugHug AI
-        </h1>
-        <p className="text-xl md:text-2xl text-gray-300 mb-4">
-          Your AI Therapist for Debugging Code & Life
-        </p>
-        <p className="text-gray-500 max-w-2xl mx-auto mb-12">
-          Experience a new way of solving problems with an AI companion that understands 
-          both your technical challenges and emotional state. Get instant help, empathetic 
-          responses, and intelligent solutions.
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-          <Link
-            href="/signup"
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all"
-          >
-            Get Started Free
-          </Link>
-          <Link
-            href="/login"
-            className="px-8 py-4 bg-gray-800 hover:bg-gray-750 border border-gray-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all"
-          >
-            Sign In
-          </Link>
-        </div>
-
-        {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-blue-500 transition-colors">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+    <div className="app-shell flex flex-col">
+      {/* Nav */}
+      <header className="w-full px-6 py-5">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-white border border-[var(--line)] flex items-center justify-center shadow-sm">
+              <span className="text-xs font-semibold">BH</span>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Instant Help</h3>
-            <p className="text-gray-400 text-sm">
-              Get immediate responses to your coding questions and debugging challenges
-            </p>
+            <div>
+              <div className="text-base font-semibold">BugHug AI</div>
+              <div className="text-xs text-muted">Friendly helper for fixing bugs</div>
+            </div>
           </div>
-
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-purple-500 transition-colors">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Smart Solutions</h3>
-            <p className="text-gray-400 text-sm">
-              AI-powered insights that understand context and provide actionable solutions
-            </p>
-          </div>
-
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-green-500 transition-colors">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">24/7 Available</h3>
-            <p className="text-gray-400 text-sm">
-              Your AI companion is always here, ready to help whenever you need support
-            </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="px-3 py-2 text-xs font-semibold text-[var(--ink)] bg-[var(--card)] border border-[var(--line)] rounded-full hover:brightness-105 transition"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? "Light mode" : "Dark mode"}
+            </button>
+            <Link
+              href="/login"
+              className="px-4 py-2 text-sm text-[var(--ink)] bg-[var(--card)] border border-[var(--line)] rounded-full hover:brightness-105 transition"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="px-4 py-2 text-sm text-white bg-[var(--accent)] rounded-full hover:brightness-105 transition"
+            >
+              Start free
+            </Link>
           </div>
         </div>
-      </div>
+      </header>
+
+      {/* Hero */}
+      <main className="flex-1 px-6 pb-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
+          <div className="pt-8">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--line)]">
+              <span>Simple, calm, and helpful</span>
+            </div>
+            <h1 className="mt-5 text-4xl md:text-5xl font-semibold leading-tight max-w-2xl">
+              Fix bugs with a friendly guide that explains everything
+              <span className="gradient-text"> in plain words</span>.
+            </h1>
+            <p className="mt-4 text-base md:text-lg text-muted max-w-2xl">
+              BugHug AI is a gentle chat helper. It explains errors step by step, gives you
+              quick fixes, and keeps the tone kind and easy to follow.
+            </p>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/signup"
+                className="px-6 py-3 text-sm text-white bg-[var(--accent)] rounded-xl hover:brightness-105 transition text-center"
+              >
+                Try it free
+              </Link>
+              <Link
+                href="/login"
+                className="px-6 py-3 text-sm text-[var(--ink)] bg-[var(--card)] border border-[var(--line)] rounded-xl hover:brightness-105 transition text-center"
+              >
+                I already have an account
+              </Link>
+            </div>
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  label: "Clear steps",
+                  text: "Get a tiny checklist you can follow.",
+                },
+                {
+                  label: "Friendly tone",
+                  text: "No scary jargon or blame.",
+                },
+                {
+                  label: "Always here",
+                  text: "Help is ready any time.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="bg-[var(--card)] border border-[var(--line)] rounded-2xl px-4 py-3"
+                >
+                  <div className="text-xs font-semibold text-[var(--accent)]">{item.label}</div>
+                  <div className="text-sm text-muted mt-1">{item.text}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="card-soft rounded-[28px] p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs text-muted">Your helper</div>
+                  <div className="text-lg font-semibold">BugHug AI</div>
+                </div>
+                <div className="px-3 py-1 text-xs font-semibold rounded-full bg-[var(--soft)] text-[var(--accent)]">
+                  Online
+                </div>
+              </div>
+              <div className="mt-5 space-y-3">
+                <div className="bg-[var(--soft)] rounded-2xl px-4 py-3 text-sm">
+                  Hi! Tell me what went wrong and I will explain it simply.
+                </div>
+                <div className="bg-[var(--soft)] rounded-2xl px-4 py-3 text-sm ml-auto">
+                  My app says “undefined is not a function.”
+                </div>
+                <div className="bg-[var(--soft)] rounded-2xl px-4 py-3 text-sm">
+                  No problem. Let us check the line number together and fix it step by step.
+                </div>
+              </div>
+              <div className="mt-5 flex items-center gap-2">
+                <div className="flex-1 bg-[var(--soft)] rounded-full px-4 py-2 text-xs text-muted">
+                  Type your question...
+                </div>
+                <button className="px-4 py-2 text-xs text-white bg-[var(--accent)] rounded-full">
+                  Send
+                </button>
+              </div>
+            </div>
+            <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-[#fff0db] blur-2xl" />
+            <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-[#d8ecff] blur-2xl" />
+          </div>
+        </div>
+
+        <section className="max-w-6xl mx-auto mt-16">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <h2 className="text-2xl font-semibold">How it works (super simple)</h2>
+            <div className="text-sm text-muted">Three small steps</div>
+          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                step: "1",
+                title: "Tell us your problem",
+                text: "Paste the error or describe what you see.",
+              },
+              {
+                step: "2",
+                title: "Get a calm explanation",
+                text: "We explain what it means in plain words.",
+              },
+              {
+                step: "3",
+                title: "Fix it with a checklist",
+                text: "Follow the small steps and you are done.",
+              },
+            ].map((item) => (
+              <div key={item.title} className="bg-[var(--card)] border border-[var(--line)] rounded-3xl p-5">
+                <div className="w-8 h-8 rounded-full bg-[var(--soft)] text-[var(--accent)] text-sm font-bold flex items-center justify-center">
+                  {item.step}
+                </div>
+                <div className="mt-3 text-lg font-semibold">{item.title}</div>
+                <div className="mt-1 text-sm text-muted">{item.text}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="py-6 text-center text-xs text-muted">
+        © 2026 BugHug AI. Built with care for busy brains.
+      </footer>
     </div>
   );
 }

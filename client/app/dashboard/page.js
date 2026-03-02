@@ -43,17 +43,17 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-950">
+      <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400 text-lg">Loading your therapy session...</p>
+          <div className="w-14 h-14 border-4 border-[var(--accent)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted text-lg">Getting your chat ready...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-950 overflow-hidden">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         onNewChat={handleNewChat}
@@ -64,44 +64,26 @@ export default function Dashboard() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Navigation Bar */}
-        <div className="bg-gray-950/90 border-b border-gray-800 px-5 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-400">BugHug Assistant</span>
+        <div className="bg-white/80 border-b border-[var(--line)] px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-white border border-[var(--line)] rounded-xl flex items-center justify-center">
+              <span className="text-[10px] font-semibold">BH</span>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-[var(--ink)]">BugHug AI</div>
+              <div className="text-[11px] text-muted">Ask anything about your bug</div>
+            </div>
           </div>
-          
+
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-800 transition-colors"
+              className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[#f1f4ff] transition-colors"
             >
-              <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
+              <div className="w-7 h-7 bg-[#eaf1ff] rounded-full flex items-center justify-center">
+                <span className="text-[10px] font-semibold text-[var(--accent)]">ME</span>
               </div>
-              <svg
-                className="w-3.5 h-3.5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              <span className="text-xs text-muted">Menu</span>
             </button>
 
             {showUserMenu && (
@@ -110,25 +92,12 @@ export default function Dashboard() {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowUserMenu(false)}
                 />
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-20 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-[var(--line)] rounded-lg shadow-xl z-20 overflow-hidden">
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 text-red-400 hover:bg-gray-750 transition-colors flex items-center gap-2"
+                    className="w-full text-left px-4 py-2.5 text-red-500 hover:bg-[#fff1f1] transition-colors flex items-center gap-2.5"
                   >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    Logout
+                    <span className="text-sm">Log out</span>
                   </button>
                 </div>
               </>

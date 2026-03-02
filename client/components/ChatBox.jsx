@@ -3,6 +3,49 @@
 import { useState, useEffect, useRef } from "react";
 import { sendMessage, getChatSession } from "@/lib/api";
 
+// Extracted outside to avoid re-mounting on every parent render
+function Composer({ input, onChange, onKeyPress, onSend, loading, textareaRef }) {
+  return (
+    <div className="w-full">
+      <div className="relative bg-white border border-[var(--line)] rounded-2xl shadow-sm focus-within:border-[#b8c4e8] focus-within:ring-2 focus-within:ring-[#dfe6ff] transition-all duration-200">
+        <textarea
+          ref={textareaRef}
+          className="w-full bg-transparent text-[var(--ink)] placeholder:text-[#97a0b6] caret-[#2a6df6] px-4 py-3.5 pr-14 outline-none resize-none max-h-44 overflow-y-auto text-[15px] leading-6 rounded-2xl"
+          value={input}
+          onChange={onChange}
+          onKeyDown={onKeyPress}
+          placeholder="Type your bug or question here..."
+          rows={1}
+        />
+        <button
+          onClick={onSend}
+          disabled={!input.trim() || loading}
+          className="absolute right-2.5 bottom-2.5 bg-[var(--accent)] hover:brightness-105 disabled:bg-[#d6dbea] disabled:text-[#9aa3b8] disabled:cursor-not-allowed text-white px-3 py-2 rounded-xl transition-all duration-150 text-xs font-semibold"
+          title="Send message"
+        >
+          Send
+        </button>
+      </div>
+      <p className="text-xs text-muted text-center mt-2">
+        Double-check important details, just to be safe.
+      </p>
+    </div>
+  );
+}
+
+const BotAvatar = () => (
+  <div className="w-8 h-8 rounded-full bg-[#eaf1ff] border border-[#d6e2ff] flex items-center justify-center flex-shrink-0 mt-0.5">
+    <span className="text-[10px] font-semibold text-[var(--accent)]">BH</span>
+  </div>
+);
+
+const starterPrompts = [
+  "Explain this error like I'm 10",
+  "Tell me the next step to fix it",
+  "Summarize what went wrong",
+  "Give me a short checklist",
+];
+
 export default function ChatBox({ sessionId, onSessionCreated }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -11,22 +54,16 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const scrollToBottom = () => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, [messages, loading]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    // Load messages when sessionId changes
     const loadSession = async () => {
       if (!sessionId) {
         setMessages([]);
         return;
       }
-
       setLoadingSession(true);
       try {
         const session = await getChatSession(sessionId);
@@ -38,7 +75,6 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
         setLoadingSession(false);
       }
     };
-
     loadSession();
   }, [sessionId]);
 
@@ -46,7 +82,8 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height =
+        Math.min(textareaRef.current.scrollHeight, 176) + "px";
     }
   }, [input]);
 
@@ -54,35 +91,29 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
     if (!input.trim() || loading) return;
 
     const userMsg = { role: "user", content: input };
-    setMessages(prev => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
 
     try {
-      const res = await sendMessage({
-        message: input,
-        sessionId
-      });
-
-      if (onSessionCreated && !sessionId) {
-        onSessionCreated(res.sessionId);
-      }
-
-      setMessages(prev => [
+      const res = await sendMessage({ message: input, sessionId });
+      if (onSessionCreated && !sessionId) onSessionCreated(res.sessionId);
+      setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: res.reply }
+        { role: "assistant", content: res.reply },
       ]);
-    } catch (err) {
-      setMessages(prev => [
+    } catch {
+      setMessages((prev) => [
         ...prev,
-        { 
-          role: "assistant", 
-          content: "Sorry, I'm having trouble connecting right now. Please try again." 
-        }
+        {
+          role: "assistant",
+          content:
+            "Sorry, I'm having trouble connecting right now. Please try again.",
+        },
       ]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const handleKeyPress = (e) => {
@@ -92,131 +123,74 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
     }
   };
 
-  const showEmptyState = !loadingSession && messages.length === 0;
-
-  const starterPrompts = [
-    "Help me debug this error",
-    "Explain this concept simply",
-    "Optimize this code snippet",
-    "Give me best practices"
-  ];
-
-  const Composer = ({ compact = false }) => (
-    <div className={`w-full ${compact ? "" : "max-w-3xl mx-auto"}`}>
-      <div className="relative bg-gray-900 border border-gray-700 rounded-2xl shadow-sm focus-within:border-gray-500 focus-within:ring-1 focus-within:ring-gray-500/30 transition-colors">
-        <textarea
-          ref={textareaRef}
-          className="w-full bg-transparent text-gray-100 placeholder:text-gray-500 caret-white px-4 py-3 pr-12 outline-none resize-none max-h-40 overflow-y-auto text-[15px] leading-6"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Message BugHug AI..."
-          rows={1}
-        />
-        <button
-          onClick={handleSend}
-          disabled={!input.trim() || loading}
-          className="absolute right-2.5 bottom-2.5 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed text-white p-2 rounded-md transition-colors"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-            />
-          </svg>
-        </button>
-      </div>
-      {!compact && (
-        <p className="text-[11px] text-gray-500 text-center mt-2.5">
-          BugHug AI can make mistakes. Please verify important information.
-        </p>
-      )}
-    </div>
-  );
+  const isEmpty = !loadingSession && messages.length === 0;
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-gray-950">
+    <div className="flex flex-col h-full min-h-0">
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto min-h-0">
         <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
           {loadingSession ? (
-            <div className="flex flex-col items-center justify-center h-full py-20">
-              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-              <p className="text-gray-400">Loading conversation...</p>
+            <div className="flex flex-col items-center justify-center py-24">
+              <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin mb-3" />
+              <p className="text-muted text-sm">Loading your chat...</p>
             </div>
-          ) : messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center py-14 md:py-20">
-              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">
-                Welcome to BugHug AI
+          ) : isEmpty ? (
+            /* ── Empty / Welcome state ── */
+            <div className="flex flex-col items-center text-center pt-12 pb-6">
+              <div className="w-14 h-14 bg-white border border-[var(--line)] rounded-2xl flex items-center justify-center mb-5 shadow-sm">
+                <span className="text-xs font-semibold text-[var(--accent)]">BH</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-semibold text-[var(--ink)] mb-2">
+                What do you want help with?
               </h2>
-              <p className="text-gray-400 text-sm md:text-base max-w-md">
-                Your personal AI therapist for debugging code and life. 
-                Start a conversation below.
+              <p className="text-muted text-sm md:text-base max-w-sm">
+                I can explain errors clearly and guide you step by step.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 mt-8 w-full max-w-2xl">
-                {starterPrompts.map((promptText, promptIndex) => (
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-8 w-full max-w-xl">
+                {starterPrompts.map((text) => (
                   <button
-                    key={promptIndex}
-                    onClick={() => setInput(promptText)}
-                    className="p-3 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-gray-700 rounded-lg text-left transition-colors"
+                    key={text}
+                    onClick={() => {
+                      setInput(text);
+                      textareaRef.current?.focus();
+                    }}
+                    className="p-3.5 bg-white/80 hover:bg-white border border-[var(--line)] rounded-xl text-left transition-all duration-150 group"
                   >
-                    <span className="text-sm text-gray-300">{promptText}</span>
+                    <span className="text-sm text-[var(--ink)] group-hover:text-black transition-colors">{text}</span>
                   </button>
                 ))}
               </div>
-              <div className="mt-7 w-full max-w-2xl">
-                <Composer compact />
-              </div>
             </div>
           ) : (
+            /* ── Messages ── */
             <div className="space-y-5">
-              {messages.map((message, messageIndex) => (
-                <div
-                  key={messageIndex}
-                  className={`flex gap-4 ${
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {message.role === "assistant" && (
-                    <div className="w-7 h-7 bg-gray-800 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 text-[11px] text-gray-300">
-                      AI
-                    </div>
-                  )}
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-5 py-3 ${
-                      message.role === "user"
-                        ? "bg-gray-700 text-white"
-                        : "bg-gray-900 text-gray-100 border border-gray-800"
-                    }`}
-                  >
-                    <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
+              {messages.map((message, idx) =>
+                message.role === "user" ? (
+                  <div key={idx} className="flex justify-end">
+                    <div className="max-w-[78%] md:max-w-[70%] bg-[#e8f9f2] text-[var(--ink)] rounded-2xl rounded-br-sm px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap break-words border border-[#ccefe3]">
                       {message.content}
                     </div>
                   </div>
-                  {message.role === "user" && (
-                    <div className="w-7 h-7 bg-gray-700 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 text-[11px] text-gray-200">
-                      You
+                ) : (
+                  <div key={idx} className="flex gap-3 justify-start items-start">
+                    <BotAvatar />
+                    <div className="max-w-[82%] md:max-w-[78%] text-[var(--ink)] text-[15px] leading-relaxed whitespace-pre-wrap break-words pt-0.5">
+                      {message.content}
                     </div>
-                  )}
-                </div>
-              ))}
-              {loading && (
-                <div className="flex gap-4">
-                  <div className="w-7 h-7 bg-gray-800 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 text-[11px] text-gray-300">
-                    AI
                   </div>
-                  <div className="bg-gray-800 border border-gray-700 rounded-2xl px-4 py-3">
-                    <div className="flex gap-1.5">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                )
+              )}
+
+              {loading && (
+                <div className="flex gap-3 items-start">
+                  <BotAvatar />
+                  <div className="bg-white border border-[var(--line)] rounded-2xl rounded-bl-sm px-4 py-3.5">
+                    <div className="flex gap-1.5 items-center">
+                      <span className="w-2 h-2 bg-[#9fb1da] rounded-full animate-bounce [animation-delay:0ms]" />
+                      <span className="w-2 h-2 bg-[#9fb1da] rounded-full animate-bounce [animation-delay:160ms]" />
+                      <span className="w-2 h-2 bg-[#9fb1da] rounded-full animate-bounce [animation-delay:320ms]" />
                     </div>
                   </div>
                 </div>
@@ -227,14 +201,19 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
         </div>
       </div>
 
-      {/* Input Area - Fixed at Bottom */}
-      {!showEmptyState && (
-        <div className="border-t border-gray-800/90 bg-gray-950/95 backdrop-blur-sm">
-          <div className="max-w-3xl mx-auto px-4 py-4">
-            <Composer />
-          </div>
+      {/* Input Bar — always visible */}
+      <div className="border-t border-[var(--line)] bg-white/80">
+        <div className="max-w-3xl mx-auto px-4 py-3.5">
+          <Composer
+            input={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            onSend={handleSend}
+            loading={loading}
+            textareaRef={textareaRef}
+          />
         </div>
-      )}
+      </div>
     </div>
   );
 }
