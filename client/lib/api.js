@@ -11,3 +11,8 @@ export const sendMessage = async (payload) => {
   const res = await api.post("/chat", payload);
   return res.data;
 };
+
+export const getChatSession = async (sessionId) => {
+  const res = await api.get(`/chat/${sessionId}`);
+  return res.data;
+};
