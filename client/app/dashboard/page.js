@@ -64,10 +64,9 @@ export default function Dashboard() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Navigation Bar */}
-        <div className="bg-gray-900 border-b border-gray-800 px-5 py-2.5 flex items-center justify-between">
+        <div className="bg-gray-950/90 border-b border-gray-800 px-5 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-gray-400">AI Therapist Online</span>
+            <span className="text-sm text-gray-400">BugHug Assistant</span>
           </div>
           
           <div className="relative">
