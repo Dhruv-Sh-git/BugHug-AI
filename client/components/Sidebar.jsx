@@ -34,14 +34,14 @@ export default function Sidebar({ onNewChat, onSelectChat, currentSessionId }) {
 
   return (
     <div
-      className={`bg-gray-900 border-r border-gray-800 flex flex-col transition-all duration-300 ${
+      className={`bg-gray-900/90 border-r border-gray-800 flex flex-col transition-all duration-300 ${
         isCollapsed ? "w-0 md:w-16" : "w-64 md:w-72"
       }`}
     >
       {/* Header */}
       <div className="p-3.5 border-b border-gray-800 flex items-center justify-between">
         {!isCollapsed && (
-          <h2 className="text-base font-semibold text-white">BugHug AI</h2>
+          <h2 className="text-sm font-semibold tracking-wide text-gray-200">BugHug AI</h2>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -79,7 +79,7 @@ export default function Sidebar({ onNewChat, onSelectChat, currentSessionId }) {
           <div className="p-3">
             <button
               onClick={onNewChat}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-colors"
+              className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-100 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-colors"
             >
               <svg
                 className="w-4 h-4"
@@ -110,8 +110,8 @@ export default function Sidebar({ onNewChat, onSelectChat, currentSessionId }) {
                   onClick={() => onSelectChat(chat._id)}
                   className={`w-full text-left p-2.5 rounded-lg transition-colors ${
                     currentSessionId === chat._id
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                      ? "bg-gray-800 text-gray-100 border border-gray-700"
+                      : "text-gray-400 hover:bg-gray-800/70 hover:text-gray-200"
                   }`}
                 >
                   <div className="flex items-start gap-2.5">
@@ -148,7 +148,7 @@ export default function Sidebar({ onNewChat, onSelectChat, currentSessionId }) {
         <div className="flex flex-col items-center py-4 gap-4">
           <button
             onClick={onNewChat}
-            className="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="p-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-100 rounded-lg transition-colors"
             title="New Chat"
           >
             <svg
