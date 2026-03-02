@@ -92,21 +92,28 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
     }
   };
 
+  const starterPrompts = [
+    "Help me debug this error",
+    "Explain this concept simply",
+    "Optimize this code snippet",
+    "Give me best practices"
+  ];
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full min-h-0 bg-gray-950">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="max-w-3xl mx-auto px-4 py-6 md:py-8">
           {loadingSession ? (
             <div className="flex flex-col items-center justify-center h-full py-20">
-              <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
               <p className="text-gray-400">Loading conversation...</p>
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center py-20">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <div className="flex flex-col items-center justify-center h-full text-center py-16 md:py-24">
+              <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-md">
                 <svg
-                  className="w-10 h-10 text-white"
+                  className="w-5 h-5 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -119,50 +126,38 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
                   />
                 </svg>
               </div>
-              <h2 className="text-3xl font-bold text-white mb-3">
+              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">
                 Welcome to BugHug AI
               </h2>
-              <p className="text-gray-400 text-lg max-w-md">
+              <p className="text-gray-400 text-sm md:text-base max-w-md">
                 Your personal AI therapist for debugging code and life. 
                 Start a conversation below.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-10 w-full max-w-2xl">
-                {[
-                  { icon: "💡", text: "Help me debug this error", color: "from-yellow-500 to-orange-500" },
-                  { icon: "🤔", text: "Explain this concept", color: "from-blue-500 to-cyan-500" },
-                  { icon: "🚀", text: "Optimize my code", color: "from-purple-500 to-pink-500" },
-                  { icon: "🎯", text: "Best practices advice", color: "from-green-500 to-emerald-500" }
-                ].map((prompt, i) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 mt-8 w-full max-w-2xl">
+                {starterPrompts.map((promptText, promptIndex) => (
                   <button
-                    key={i}
-                    onClick={() => setInput(prompt.text)}
-                    className="p-4 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-gray-600 rounded-xl text-left transition-all group"
+                    key={promptIndex}
+                    onClick={() => setInput(promptText)}
+                    className="p-3 bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-gray-700 rounded-lg text-left transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 bg-gradient-to-br ${prompt.color} rounded-lg flex items-center justify-center text-xl group-hover:scale-110 transition-transform`}>
-                        {prompt.icon}
-                      </div>
-                      <span className="text-gray-300 group-hover:text-white transition-colors">
-                        {prompt.text}
-                      </span>
-                    </div>
+                    <span className="text-sm text-gray-300">{promptText}</span>
                   </button>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="space-y-6">
-              {messages.map((m, i) => (
+            <div className="space-y-5">
+              {messages.map((message, messageIndex) => (
                 <div
-                  key={i}
+                  key={messageIndex}
                   className={`flex gap-4 ${
-                    m.role === "user" ? "justify-end" : "justify-start"
+                    message.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {m.role === "assistant" && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  {message.role === "assistant" && (
+                    <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
                       <svg
-                        className="w-5 h-5 text-white"
+                        className="w-3.5 h-3.5 text-white"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -178,19 +173,19 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
                   )}
                   <div
                     className={`max-w-[80%] rounded-2xl px-5 py-3 ${
-                      m.role === "user"
+                      message.role === "user"
                         ? "bg-blue-600 text-white"
                         : "bg-gray-800 text-gray-100 border border-gray-700"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap break-words leading-relaxed">
-                      {m.content}
+                    <div className="whitespace-pre-wrap break-words leading-relaxed text-[15px]">
+                      {message.content}
                     </div>
                   </div>
-                  {m.role === "user" && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  {message.role === "user" && (
+                    <div className="w-7 h-7 bg-gray-700 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
                       <svg
-                        className="w-5 h-5 text-white"
+                        className="w-3.5 h-3.5 text-gray-100"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -208,9 +203,9 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
               ))}
               {loading && (
                 <div className="flex gap-4">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
                     <svg
-                      className="w-5 h-5 text-white animate-pulse"
+                      className="w-3.5 h-3.5 text-white animate-pulse"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -223,7 +218,7 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
                       />
                     </svg>
                   </div>
-                  <div className="bg-gray-800 border border-gray-700 rounded-2xl px-5 py-3">
+                  <div className="bg-gray-800 border border-gray-700 rounded-2xl px-4 py-3">
                     <div className="flex gap-1.5">
                       <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
                       <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
@@ -239,12 +234,12 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
       </div>
 
       {/* Input Area - Fixed at Bottom */}
-      <div className="border-t border-gray-800 bg-gray-900/95 backdrop-blur-sm">
+      <div className="border-t border-gray-800/90 bg-gray-950/95 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto px-4 py-4">
-          <div className="relative bg-gray-800 border border-gray-700 rounded-2xl shadow-lg focus-within:border-blue-500 transition-colors">
+          <div className="relative bg-gray-900 border border-gray-700 rounded-2xl shadow-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500/30 transition-colors">
             <textarea
               ref={textareaRef}
-              className="w-full bg-transparent text-white px-5 py-4 pr-14 outline-none resize-none max-h-40 overflow-y-auto"
+              className="w-full bg-transparent text-gray-100 placeholder:text-gray-500 caret-white px-4 py-3 pr-12 outline-none resize-none max-h-40 overflow-y-auto text-[15px] leading-6"
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
@@ -254,10 +249,10 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
             <button
               onClick={handleSend}
               disabled={!input.trim() || loading}
-              className="absolute right-3 bottom-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white p-2.5 rounded-lg transition-colors"
+              className="absolute right-2.5 bottom-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white p-2 rounded-md transition-colors"
             >
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -271,7 +266,7 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
               </svg>
             </button>
           </div>
-          <p className="text-xs text-gray-500 text-center mt-3">
+          <p className="text-[11px] text-gray-500 text-center mt-2.5">
             BugHug AI can make mistakes. Please verify important information.
           </p>
         </div>
