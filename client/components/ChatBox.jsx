@@ -97,7 +97,12 @@ export default function ChatBox({ sessionId, onSessionCreated }) {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-4 py-8">
-          {messages.length === 0 ? (
+          {loadingSession ? (
+            <div className="flex flex-col items-center justify-center h-full py-20">
+              <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-gray-400">Loading conversation...</p>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-20">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <svg
