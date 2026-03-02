@@ -64,7 +64,7 @@ export default function Dashboard() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Navigation Bar */}
-        <div className="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between">
+        <div className="bg-gray-900 border-b border-gray-800 px-5 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-sm text-gray-400">AI Therapist Online</span>
@@ -73,11 +73,11 @@ export default function Dashboard() {
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+              className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-800 transition-colors"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+              <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center">
                 <svg
-                  className="w-5 h-5 text-white"
+                  className="w-4 h-4 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -91,7 +91,7 @@ export default function Dashboard() {
                 </svg>
               </div>
               <svg
-                className="w-4 h-4 text-gray-400"
+                className="w-3.5 h-3.5 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
